@@ -36,8 +36,7 @@ def get_email_code(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": "错误的邮箱格式",
-            "data": {"error": form.errors}
+            "msg": form.errors['__all__'][0],
         })
 
 
@@ -58,8 +57,7 @@ def register(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": "注册失败",
-            "data": {"error": form.errors}
+            "msg": form.errors['__all__'][0],
         })
 
 
@@ -92,8 +90,7 @@ def login(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": "登录参数错误",
-            "data": {"error": form.errors}
+            "msg": form.errors['__all__'][0],
         })
 
 
@@ -119,6 +116,5 @@ def retrieve(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": "密码找回失败",
-            "data": {"error": form.errors}
+            "msg": form.errors['__all__'][0],
         })
