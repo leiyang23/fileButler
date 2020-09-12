@@ -1,43 +1,62 @@
 import random
 import time
+from datetime import datetime, timedelta
 from string import ascii_letters, digits
 
+import jwt
+from django.conf import settings
 from django.db import models
 
 
 def random_user_id():
     """生成随机ID"""
-
     return "u" + str(int(time.time()))
 
+def random_user_name():
+    """生成随机ID"""
+    return "user" + str(int(time.time()))
 
 def random_group_id():
     """生成随机ID"""
-
     return "u" + str(int(time.time()))
 
 
 def random_access_policy_id():
     """生成随机ID"""
-
     return "u" + str(int(time.time()))
 
 
 def gen_key():
     """生成随机Key"""
-
     return "".join(random.choices(ascii_letters + digits, k=40))
 
 
 class User(models.Model):
     """平台用户"""
     uid = models.CharField(verbose_name="用户ID", default=random_user_id, unique=True, primary_key=True, max_length=11)
-    name = models.CharField(verbose_name="用户名", max_length=80, unique=True)
+    name = models.CharField(verbose_name="用户名", max_length=80, unique=True, default=random_user_name)
     email = models.EmailField(verbose_name="邮箱")
     password = models.CharField(verbose_name="密码", max_length=300, help_text="hash加密")
 
+    is_active = models.IntegerField(verbose_name="是否激活", choices=((0, "禁用"), (1, "可用")), default=1)
+
     create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     change_time = models.DateTimeField(verbose_name="最后修改时间", auto_now=True)
+
+    @property
+    def token(self):
+        return self._generate_token()
+
+    def _generate_token(self):
+        payload = {
+            "exp": datetime.now() + timedelta(days=1),
+            "iat": datetime.now(),
+            "data": {
+                "email": self.email,
+            }
+        }
+        token = jwt.encode(payload, settings.SECRET_KEY)
+        return token.decode("utf-8")
 
 
 class Group(models.Model):
@@ -81,7 +100,7 @@ class GroupAndAccessPolicy(models.Model):
     aid = models.CharField(verbose_name="策略ID", max_length=11, unique=True)
 
 
-class RegisterCode(models.Model):
+class VerifyEmail(models.Model):
     """注册验证码"""
     code = models.IntegerField(verbose_name="六位验证码")
     email = models.EmailField(verbose_name="注册邮箱", unique=True)

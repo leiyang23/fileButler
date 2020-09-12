@@ -2,5 +2,7 @@
 venv/
 
 __pychache__/
+migrations/
 
+db.sqlite3
 todo.py
