@@ -1,17 +1,7 @@
 import time
 import uuid
-from typing import Callable
 
 from django.db import models
-
-
-def random_id(prefix: str) -> Callable:
-    """生成随机ID"""
-
-    def inner():
-        return prefix + str(int(time.time()))
-
-    return inner
 
 
 class Bucket(models.Model):
@@ -38,7 +28,7 @@ class File(models.Model):
     name = models.CharField(verbose_name="文件名", max_length=200)
     hash = models.CharField(verbose_name="hash", max_length=100)
     size = models.IntegerField(verbose_name="大小", help_text="单位：字节")
-    prefix = models.CharField(verbose_name="前缀", help_text="路径前缀")
+    prefix = models.CharField(verbose_name="前缀", help_text="路径前缀", max_length=120)
 
     create_time = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     change_time = models.DateTimeField(verbose_name="最后修改时间", auto_now=True)
