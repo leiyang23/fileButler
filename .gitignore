@@ -3,6 +3,7 @@ venv/
 
 __pychache__/
 migrations/
+media/
 
 db.sqlite3
 todo.py

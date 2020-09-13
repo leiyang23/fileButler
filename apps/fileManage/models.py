@@ -31,7 +31,7 @@ class Bucket(models.Model):
 
 class File(models.Model):
     """文件"""
-    fid = models.UUIDField(verbose_name="文件ID", primary_key=True, default=uuid.uuid4)
+    fid = models.CharField(verbose_name="文件ID", primary_key=True, default=uuid.uuid4, max_length=36)
     name = models.CharField(verbose_name="文件名", max_length=200)
     content_type = models.CharField(verbose_name="文件类型", max_length=100)
     size = models.IntegerField(verbose_name="大小", help_text="单位：字节")

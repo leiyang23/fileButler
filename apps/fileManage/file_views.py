@@ -1,13 +1,11 @@
-from pathlib import Path
-
+from django.conf import settings
 from django.db.models import Sum
+from django.db.transaction import atomic
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.http import require_POST, require_GET
-from django.conf import settings
-from django.db.transaction import atomic
 
-from .models import Bucket, UserAndBucket, File, BucketAndFile
 from user.decorators import require_login
+from .models import Bucket, UserAndBucket, File, BucketAndFile
 
 
 @require_login
@@ -73,7 +71,7 @@ def batch_upload(req):
     with atomic():
         objs = File.objects.bulk_create(file_objs)
         BucketAndFile.objects.bulk_create(
-            [BucketAndFile(bid=bucket.bid, fid=str(obj.fid).replace("-", "")) for obj in objs])
+            [BucketAndFile(bid=bucket.bid, fid=obj.fid) for obj in objs])
 
     return JsonResponse({
         "errcode": 0,

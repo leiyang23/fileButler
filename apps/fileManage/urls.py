@@ -8,6 +8,7 @@ bucket_urlpatterns = [
     path("bucket/get_all", get_buckets),
     path("bucket/del", del_bucket),
     path("bucket/add", add_bucket),
+    path("bucket/files", get_files),
 ]
 
 file_urlpatterns = [

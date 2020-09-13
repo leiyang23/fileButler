@@ -17,7 +17,7 @@ def get_buckets(req):
     user = User.objects.get(email=email)
 
     bids = UserAndBucket.objects.filter(uid=user.uid).values_list("bid")
-    buckets = Bucket.objects.filter(bid__in=bids).values("name","create_time")
+    buckets = Bucket.objects.filter(bid__in=bids).values("name", "create_time")
 
     return JsonResponse({
         "errcode": 0,
@@ -39,7 +39,7 @@ def get_bucket(req):
         UserAndBucket.objects.get(bid=bucket.pk, uid=user.pk)
 
         files_id = BucketAndFile.objects.filter(bid=bucket.bid).values_list("fid")
-        files_id = [qz[0].replace("-", "")for qz in files_id]
+        files_id = [qz[0] for qz in files_id]
         total_size = File.objects.filter(fid__in=files_id).aggregate(total_size=Sum("size"))['total_size']
 
         return JsonResponse({
@@ -125,4 +125,36 @@ def add_bucket(req):
         return JsonResponse({
             "errcode": -1,
             "msg": form.errors
+        })
+
+
+@require_login
+@require_GET
+def get_files(req):
+    uid = req.uid
+    bucket_name = req.GET.get("bucket", None)
+
+    try:
+        bucket = Bucket.objects.get(name=bucket_name)
+        UserAndBucket.objects.get(uid=uid, bid=bucket.bid)
+
+        bucket_and_files = BucketAndFile.objects.filter(bid=bucket.bid).values_list("fid")
+        fids = [i[0] for i in bucket_and_files]
+        files = File.objects.filter(fid__in=fids).values()
+
+        return JsonResponse({
+            "errcode": 0,
+            "msg": "成功获取",
+            "data": list(files)
+        })
+
+    except UserAndBucket.DoesNotExist:
+        return JsonResponse({
+            "errcode": -1,
+            "msg": "该bucket不属于你"
+        })
+    except Bucket.DoesNotExist:
+        return JsonResponse({
+            "errcode": -1,
+            "msg": "该bucket不存在"
         })
