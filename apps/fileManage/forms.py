@@ -13,3 +13,9 @@ def check_name_existed(name):
 
 class BucketForm(forms.Form):
     name = forms.CharField(required=True, validators=[check_name_existed])
+
+
+class BatchUploadForm(forms.Form):
+    bucket = forms.CharField(required=True, max_length=80)
+    prefix = forms.CharField(required=True, max_length=80)
+    file = forms.FileField

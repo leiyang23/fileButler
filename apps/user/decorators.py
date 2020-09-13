@@ -27,7 +27,9 @@ def require_login(view_func):
         try:
             auth_params = jwt.decode(auth[1], settings.SECRET_KEY, algorithms=['HS256'])
             email = auth_params.get('data').get('email')
+            uid = auth_params.get('data').get('uid')
             req.email = email
+            req.uid = uid
 
         except jwt.ExpiredSignatureError:
             return JsonResponse({

@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from django.db.transaction import atomic
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
@@ -5,7 +6,7 @@ from django.views.decorators.http import require_POST, require_GET
 from user.decorators import require_login
 from user.models import User
 from .forms import BucketForm
-from .models import Bucket, UserAndBucket
+from .models import Bucket, UserAndBucket, File, BucketAndFile
 
 
 @require_login
@@ -37,6 +38,10 @@ def get_bucket(req):
 
         UserAndBucket.objects.get(bid=bucket.pk, uid=user.pk)
 
+        files_id = BucketAndFile.objects.filter(bid=bucket.bid).values_list("fid")
+        files_id = [qz[0].replace("-", "")for qz in files_id]
+        total_size = File.objects.filter(fid__in=files_id).aggregate(total_size=Sum("size"))['total_size']
+
         return JsonResponse({
             "errcode": 0,
             "msg": "已获取bucket信息",
@@ -44,7 +49,7 @@ def get_bucket(req):
                 "name": bucket.name,
                 "bid": bucket.bid,
                 "capacity": bucket.capacity,
-                "size": bucket.size,
+                "size": total_size,
                 "create_time": bucket.create_time,
                 "change_time": bucket.change_time,
             }
