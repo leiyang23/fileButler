@@ -36,7 +36,7 @@ def get_email_code(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": form.errors['__all__'][0],
+            "msg": form.errors
         })
 
 
@@ -57,7 +57,7 @@ def register(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": form.errors['__all__'][0],
+            "msg": form.errors
         })
 
 
@@ -90,7 +90,7 @@ def login(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": form.errors['__all__'][0],
+            "msg": form.errors
         })
 
 
@@ -116,5 +116,5 @@ def retrieve(req):
     else:
         return JsonResponse({
             "errcode": -1,
-            "msg": form.errors['__all__'][0],
+            "msg": form.errors
         })

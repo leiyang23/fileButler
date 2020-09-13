@@ -18,12 +18,12 @@ def random_user_name():
 
 def random_group_id():
     """生成随机ID"""
-    return "u" + str(int(time.time()))
+    return "g" + str(int(time.time()))
 
 
 def random_access_policy_id():
     """生成随机ID"""
-    return "u" + str(int(time.time()))
+    return "a" + str(int(time.time()))
 
 
 def gen_key():
